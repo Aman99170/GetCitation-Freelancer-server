@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -129,5 +132,51 @@ public class UserService {
 	public UserModel getUserByUserEmail(String username) {
         return userRepo.findByEmail(username);
     }
+
+
+	public ResponseEntity<UserModel> updateUser(Integer userId, UserModel userBody) {
+		Optional<UserModel> resp =  userRepo.findById(userId);
+		if(resp.isPresent()) {
+			UserModel user = resp.get();
+			if(userBody.getConfirmPassword()!=null) {
+				user.setConfirmPassword(userBody.getConfirmPassword());
+			}
+			if(userBody.getEmail()!=null) {
+				user.setEmail(userBody.getEmail());
+			}
+			if(userBody.getFirstName()!=null) {
+				user.setFirstName(userBody.getFirstName());
+			}
+			if(userBody.getLastName()!=null) {
+				user.setLastName(userBody.getLastName());
+			}
+			if(userBody.getMobileNumber()!=null) {
+				user.setMobileNumber(userBody.getMobileNumber());
+			}
+			userRepo.save(user);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		
+	}
+
+
+	public Boolean updateUserPassword(Integer userId, String oldPassword, String newPassword) {
+		Optional<UserModel> resp =  userRepo.findById(userId);
+		if(resp.isPresent()) {
+			UserModel user = resp.get();
+			String hashedPassword = user.getPassword();
+			if(encoder.matches(oldPassword, hashedPassword)) {
+				String encryptedPassword = encoder.encode(newPassword);
+			    user.setPassword(encryptedPassword);
+			    user.setConfirmPassword(encryptedPassword);
+			    userRepo.save(user);
+			    return true;
+			}
+			return false;
+		}
+		return false;
+
+	}
 
 }

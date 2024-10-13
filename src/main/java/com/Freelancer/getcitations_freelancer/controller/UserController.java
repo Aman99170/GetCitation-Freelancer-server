@@ -10,7 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -103,6 +106,36 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+	
+	@PutMapping("/updateUserDetails/{userId}")
+	public ResponseEntity<UserModel> updateUser(@PathVariable Integer userId,@RequestBody UserModel user){
+		ResponseEntity<UserModel> resp = null;
+		try {
+			resp = userService.updateUser(userId,user);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return resp;
+	}
+	
+	@PatchMapping("/updateUserPassword/{userId}")
+	public Map<String,String> updateUserPassword(@PathVariable Integer userId,@RequestBody Map<String, String> passwordMap){
+		Boolean resp = null;
+		Map<String,String> response = new HashMap();
+		String oldPassword = passwordMap.get("oldPassword");
+        String newPassword = passwordMap.get("newPassword");
+		try {
+			resp = userService.updateUserPassword(userId,oldPassword,newPassword);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(resp) {
+			response.put("message", "Password Updated Successfully");
+			return response;
+		}
+		response.put("message", "Error in Updating Password");
+		return response;
+	}
 	
 //	@GetMapping("/csrf-token")
 //	public CsrfToken getCsrfToken(HttpServletRequest request) {

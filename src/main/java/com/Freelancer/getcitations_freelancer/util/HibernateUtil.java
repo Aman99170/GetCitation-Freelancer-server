@@ -8,6 +8,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 
+import com.Freelancer.getcitations_freelancer.model.BidWinnerModel;
 import com.Freelancer.getcitations_freelancer.model.ReseachPaperBiddingModel;
 import com.Freelancer.getcitations_freelancer.model.ReviewsModel;
 import com.Freelancer.getcitations_freelancer.model.UserModel;
@@ -37,6 +38,7 @@ public class HibernateUtil {
                 configuration.addAnnotatedClass(UserModel.class);
                 configuration.addAnnotatedClass(ReviewsModel.class);
                 configuration.addAnnotatedClass(ReseachPaperBiddingModel.class);
+                configuration.addAnnotatedClass(BidWinnerModel.class);
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
 
