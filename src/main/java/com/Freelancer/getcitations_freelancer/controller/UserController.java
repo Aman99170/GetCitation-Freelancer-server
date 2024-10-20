@@ -26,11 +26,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@CrossOrigin(
-	    origins = {
-	        "http://localhost:3000",
-	        }
-	)
+//@CrossOrigin(
+//	    origins = {
+//	        "http://localhost:3000",
+//	        }
+//	)
 @RestController
 public class UserController {
 	

@@ -3,6 +3,7 @@ package com.Freelancer.getcitations_freelancer.configuration;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,10 +29,13 @@ public class JWTFilter extends OncePerRequestFilter{
 	private JWTService jwtService;
 	@Autowired
 	ApplicationContext context;
+	@Value("${frontend.url}")
+	private String frontendUrl;
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
+		
 //		I am making this filter chain as per my authorization coming from frontend. From frontend its coming like {"authToken":"gjdvjav.."}
 		System.out.println(request.getHeader("Authorization"));
 		String authHeaderObj = request.getHeader("Authorization");
@@ -63,7 +67,7 @@ public class JWTFilter extends OncePerRequestFilter{
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			}
 		}
-		response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+		response.setHeader("Access-Control-Allow-Origin", frontendUrl);
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS,PATCH");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
         response.setHeader("Access-Control-Allow-Credentials", "true");
