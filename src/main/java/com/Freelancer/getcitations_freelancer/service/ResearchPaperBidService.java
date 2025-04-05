@@ -84,12 +84,12 @@ public class ResearchPaperBidService {
 		try {
 			String str = "select tbl.* from (select *, (\r\n"
 					+ "case\r\n"
-					+ "	when now() < RP.bid_end_date then \"Bid in Progress\"\r\n"
+					+ "	when now() < RP.bid_end_date then \'Bid in Progress\'\r\n"
 					+ "	when bid_id in (\r\n"
 					+ "		select a.bid_id from researchpaperbiddingtable a inner join bidwinnertable b\r\n"
 					+ "        on a.paper_id = b.paper_id and a.bid_by=b.winner_id and a.bid_id=b.bid_id\r\n"
-					+ "	) then \"won\"\r\n"
-					+ "	else \"Lost\" \r\n"
+					+ "	) then \'won\'\r\n"
+					+ "	else \'Lost\' \r\n"
 					+ "end\r\n"
 					+ ") as bid_status from researchpaperbiddingtable RP) as tbl where bid_by =:userId\r\n";
 			String str1 = " and (tbl.paper_name like :search or tbl.paper_link like :search or tbl.paper_doi like :search)\r\n";
