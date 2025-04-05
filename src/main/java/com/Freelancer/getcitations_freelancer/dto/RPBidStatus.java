@@ -5,11 +5,14 @@ import java.sql.Timestamp;
 import com.Freelancer.getcitations_freelancer.model.ReseachPaperBiddingModel;
 import com.Freelancer.getcitations_freelancer.model.UserModel;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
 public class RPBidStatus {
 
 	
 //	private ReseachPaperBiddingModel rpBidModel;
-	private String bidStatus;
 private Integer bidId;
 private String paperId;
 private String paperName;
@@ -23,6 +26,7 @@ private Timestamp bidAt;
 private Timestamp bidEndDate;
 private Timestamp bidStartDate;
 private Integer bidAmount;
+private String bidStatus;
 	
 //	public ReseachPaperBiddingModel getRpBidModel() {
 //		return rpBidModel;

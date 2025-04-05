@@ -54,7 +54,11 @@ public class JWTFilter extends OncePerRequestFilter{
 		}
 		String userEmail=null;
 		if(token!=null && token!="") {
+			try {
 			userEmail = jwtService.getUserEmailFromToken(token);
+			}catch(Exception e) {
+				response.setHeader("Access-Control-Allow-Origin", frontendUrl);
+			}
 		}
 		
 		if(userEmail!=null && SecurityContextHolder.getContext().getAuthentication() == null) {

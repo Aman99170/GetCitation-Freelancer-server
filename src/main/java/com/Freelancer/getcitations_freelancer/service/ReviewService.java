@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.Freelancer.getcitations_freelancer.Repository.ReviewRepository;
+import com.Freelancer.getcitations_freelancer.dto.ReviewDetails;
 import com.Freelancer.getcitations_freelancer.model.ReviewsModel;
 import com.Freelancer.getcitations_freelancer.model.UserModel;
 import com.Freelancer.getcitations_freelancer.util.HibernateUtil;
@@ -28,21 +29,15 @@ public class ReviewService {
 	
 	
 	public List<Map<String,Object>> getAllReviews(Integer userId) {
-
-		String str = "select ratingValue,review,reviewedBy from ReviewsModel r where r.reviewedBy._id!=:userId order by ratingValue limit 4";
 		List<Map<String,Object>> finalresp = new ArrayList<>();
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery(str);
-		query.setParameter("userId", userId);
-		List<Object[]> res = query.list();
-		for(Object[] response : res) {
+		List<ReviewDetails> res = reviewRepo.getAllReviews(userId);
+		for(ReviewDetails response : res) {
 			Map<String,Object> map = new HashMap<>();
-			map.put("ratingValue", response[0] !=null ? response[0] : null);
-			map.put("review", response[1] !=null ? response[1].toString() : null);
-			map.put("userDetails", response[2] !=null ? response[2] : null);
+			map.put("ratingValue", response.getRatingValue());
+			map.put("review", response.getReview());
+			map.put("userDetails", response.getReviewedBy());
 			finalresp.add(map);
 		}
-		session.close();
 		return finalresp;
 		
 	}

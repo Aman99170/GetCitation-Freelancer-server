@@ -6,25 +6,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.Freelancer.getcitations_freelancer.Repository.ResearchPaperBidRepository;
+import com.Freelancer.getcitations_freelancer.dto.BidDetails;
 import com.Freelancer.getcitations_freelancer.dto.RPBidStatus;
 import com.Freelancer.getcitations_freelancer.model.ReseachPaperBiddingModel;
-import com.Freelancer.getcitations_freelancer.model.BidWinnerModel; 
-import com.Freelancer.getcitations_freelancer.model.UserModel;
-import com.Freelancer.getcitations_freelancer.util.HibernateUtil;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class ResearchPaperBidService {
 
 	@Autowired
 	private ResearchPaperBidRepository rpBidRepo;
+	@PersistenceContext
+	private EntityManager em;
 	public void saveBid(ReseachPaperBiddingModel rpbid) {
 		rpBidRepo.save(rpbid);
 	}
@@ -44,65 +45,36 @@ public class ResearchPaperBidService {
 	}
 	
 	private Timestamp startingDate(String paperId) {
-		String str = "select distinct bidStartDate from ReseachPaperBiddingModel where paperId=:paperId";
-		Timestamp resp = null;
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery(str);
-		query.setParameter("paperId", paperId);
-		List<Timestamp> res =  query.list();
-		for(Timestamp response : res) {
-			resp = (Timestamp) response;
-		}
-		session.close();
-		return resp;
-		
+		Timestamp res =  rpBidRepo.getBidStartDate(paperId);
+		return res;
 	}
+	
 	private List<Map<String,Object>> someOneElseUser(String paperId, Integer userId) {
-		String str = "select bidBy,bidAt,bidAmount from ReseachPaperBiddingModel where paperId=:paperId and bidBy._id!=:bidBy order by bidAmount limit 1";
 		List<Map<String,Object>> resp = new ArrayList<>();
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery(str);
-		query.setParameter("paperId", paperId);
-		query.setParameter("bidBy", userId);
-		List<Object[]> res = query.list();
-		for(Object[] response :res) {
+		BidDetails res = rpBidRepo.getLowestBidBySomeoneElse(paperId,userId);
+		if(res!=null) {
 			Map<String,Object> map = new HashMap<>();
-			map.put("userDetails", response[0] !=null ? response[0] : null);
-			map.put("bidAt", response[1] !=null ? response[1].toString() : null);
-			map.put("bidAmount", response[2] !=null ? response[2] : null);
+			map.put("userDetails", res.getBidBy());
+			map.put("bidAt", res.getBidAt());
+			map.put("bidAmount", res.getBidAmount());
 			resp.add(map);
 		}
-		session.close();
 		return resp;
 	}
 	private List<Map<String,Object>> LoggedInUser(String paperId, Integer userId) {
-		String str = "select bidBy,bidAt,bidAmount from ReseachPaperBiddingModel where paperId=:paperId and bidBy._id=:bidBy order by bidAmount limit 1";
 		List<Map<String,Object>> resp = new ArrayList<>();
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery(str);
-		query.setParameter("paperId", paperId);
-		query.setParameter("bidBy", userId);
-		List<Object[]> res = query.list();
-		for(Object[] response :res) {
+		BidDetails res = rpBidRepo.getLowestBidByLoggedInUser(paperId,userId);
+		if(res!=null) {
+			System.out.println(res.getBidBy());
+		}
+		if(res!=null) {
 			Map<String,Object> map = new HashMap<>();
-			map.put("userDetails", response[0] !=null ? response[0] : null);
-			map.put("bidAt", response[1] !=null ? response[1].toString() : null);
-			map.put("bidAmount", response[2] !=null ? response[2] : null);
+			map.put("userDetails", res.getBidBy());
+			map.put("bidAt", res.getBidAt());
+			map.put("bidAmount", res.getBidAmount());
 			resp.add(map);
 		}
-		session.close();
 		return resp;
-	}
-	public UserModel fetchWinner(String paperId) {
-		BidWinnerModel resp = new BidWinnerModel();
-		String str = "from BidWinnerModel b where b.paperId=:paperId";
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery(str);
-		query.setParameter("paperId", paperId);
-		resp = (BidWinnerModel) query.getSingleResult();
-		System.out.println("Entered into fetchWinner"+resp);
-		session.close();
-		return resp.getWinnerId();
 	}
 	
 	
@@ -150,8 +122,7 @@ public class ResearchPaperBidService {
 			else {
 				str = str.concat(str7);
 			}
-			Session session = HibernateUtil.getSessionFactory().openSession();
-			Query query = session.createNativeQuery(str);
+			jakarta.persistence.Query query = em.createNativeQuery(str);
 			query.setParameter("userId", userId);
 			if(search!=null && !search.equalsIgnoreCase("")) {
 				String searchPattern = "%" + search + "%";
@@ -167,7 +138,7 @@ public class ResearchPaperBidService {
 			}	
 			
 			System.out.println(str);
-			resp = query.list();
+			resp = query.getResultList();
 			for(Object[] response : resp ) {
 				RPBidStatus obj = new RPBidStatus();
 				obj.setBidId((Integer)response[0]);
