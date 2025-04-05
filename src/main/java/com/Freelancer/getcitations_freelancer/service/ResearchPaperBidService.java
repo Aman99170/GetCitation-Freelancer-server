@@ -82,7 +82,7 @@ public class ResearchPaperBidService {
 		List<Object[]> resp =null;
 		List<RPBidStatus> obj1 = new ArrayList();
 		try {
-			String str = "select tbl.* from (select *, (\r\n"
+			String str = "select tbl.* from (select bid_id ,paper_id ,paper_name ,paper_link ,paper_doi ,posted_by ,number_Of_Citation ,posted_on ,bid_by ,bid_at ,bid_amount ,bid_starting_date ,bid_end_date, (\r\n"
 					+ "case\r\n"
 					+ "	when now() < RP.bid_end_date then \'Bid in Progress\'\r\n"
 					+ "	when bid_id in (\r\n"
