@@ -20,7 +20,7 @@ public class BidWinnerScheduler {
 	@Autowired
 	private ResearchPaperBidRepository rpBidRepo;
 	
-	@Scheduled(cron="0 0 * * * ?")
+	@Scheduled(cron="0 * * * * ?")
 	public void EntryIntoWinnerTable() {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		List<String> bidEndRPs = rpBidRepo.getEndBid(timestamp);
