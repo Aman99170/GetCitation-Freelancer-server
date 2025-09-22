@@ -29,7 +29,7 @@ public class SecurityConfig {
             .csrf().disable() // Disable CSRF if needed
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/public/**").permitAll() // Public endpoints
-                .requestMatchers("/loginFreelancer", "/signup","/getAllFreelancers").permitAll() // Specific endpoints allowed without authentication
+                .requestMatchers("/freelancer/loginFreelancer", "/freelancer/signup","/freelancer/getAllFreelancers").permitAll() // Specific endpoints allowed without authentication
                 .anyRequest().authenticated() // Other endpoints require authentication
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

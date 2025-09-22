@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Freelancer.getcitations_freelancer.Repository.UserRepository;
@@ -32,6 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 //	        }
 //	)
 @RestController
+@RequestMapping("/freelancer")
 public class UserController {
 	
 	@Autowired    
@@ -62,7 +64,7 @@ public class UserController {
 		return new ResponseEntity<>("User created",HttpStatus.OK);
 	}
 	
-	@PostMapping("/loginFreelancer")
+	@PostMapping("/login")
 	public Map<String,String> login(@RequestBody UserModel user) {
 		String authtoken = userService.verify(user);
 		Map<String,String> mp = new HashMap<>();
