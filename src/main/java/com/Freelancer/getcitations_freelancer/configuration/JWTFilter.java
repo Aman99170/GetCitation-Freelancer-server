@@ -71,10 +71,10 @@ public class JWTFilter extends OncePerRequestFilter{
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			}
 		}
-		response.setHeader("Access-Control-Allow-Origin", frontendUrl);
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS,PATCH");
-        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
+//		response.setHeader("Access-Control-Allow-Origin", frontendUrl);
+//        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS,PATCH");
+//        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
 
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
